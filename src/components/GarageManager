@@ -1,0 +1,13 @@
+'use client'
+
+// Copy the entire component code from the artifact here
+// Just add 'use client' at the top and export as default
+
+import React, { useState, useMemo, useEffect } from 'react';
+import { Search, Plus, Car, Wrench, Clipboard, MapPin, Receipt, Camera, FileText, Star, Filter, X, Upload, Calendar, AlertTriangle, Clock, CheckCircle, Bell, Settings, ArrowLeft, ChevronRight, Zap, History, Package, Image, User, Phone, Mail, ArrowRight, Check } from 'lucide-react';
+
+const GarageManager = () => {
+  // ... rest of your component code from the artifact
+};
+
+export default GarageManager;
