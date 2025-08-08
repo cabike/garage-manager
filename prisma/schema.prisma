@@ -1,0 +1,426 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String     @id @default(cuid())
+  email           String     @unique
+  name            String
+  avatar          String?
+  location        String?
+  experience      Experience @default(BEGINNER)
+  interests       String[] // JSON array
+  garageSize      String?
+  preferredBrands String[] // JSON array
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // Relations
+  cars             Car[]
+  tools            Tool[]
+  parts            Part[]
+  projects         Project[]
+  maintenanceItems MaintenanceItem[]
+  reviews          CommunityReview[]
+
+  @@map("users")
+}
+
+model Car {
+  id       String    @id @default(cuid())
+  userId   String
+  name     String
+  nickname String?
+  vin      String?   @unique
+  make     String
+  model    String
+  year     Int
+  color    String?
+  mileage  Int       @default(0)
+  location String    @default("Garage")
+  status   CarStatus @default(RUNNING)
+  notes    String?
+
+  // Engine specs
+  engine       String?
+  horsepower   Int?
+  transmission String?
+  drivetrain   String?
+
+  purchaseDate  DateTime?
+  purchasePrice Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos           Photo[]
+  parts            Part[]
+  projects         Project[]
+  maintenanceItems MaintenanceItem[]
+  recalls          Recall[]
+  serviceRecords   ServiceRecord[]
+
+  @@map("cars")
+}
+
+model Tool {
+  id            String        @id @default(cuid())
+  userId        String
+  name          String
+  category      String
+  brand         String?
+  model         String?
+  serialNumber  String?
+  location      String
+  condition     ToolCondition @default(GOOD)
+  purchaseDate  DateTime?
+  purchasePrice Float?
+  currentValue  Float?
+  notes         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos Photo[]
+
+  @@map("tools")
+}
+
+model Part {
+  id         String        @id @default(cuid())
+  userId     String
+  carId      String?
+  name       String
+  partNumber String?
+  brand      String?
+  category   String
+  location   String
+  quantity   Int           @default(1)
+  condition  PartCondition @default(NEW)
+  status     PartStatus    @default(IN_STOCK)
+
+  purchaseDate  DateTime?
+  purchasePrice Float?
+  supplierId    String?
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car          Car?          @relation(fields: [carId], references: [id], onDelete: SetNull)
+  supplier     Supplier?     @relation(fields: [supplierId], references: [id])
+  photos       Photo[]
+  projectParts ProjectPart[]
+
+  @@map("parts")
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  userId      String
+  carId       String
+  name        String
+  description String?
+  status      ProjectStatus @default(PLANNED)
+  priority    Priority      @default(MEDIUM)
+
+  startDate     DateTime?
+  targetDate    DateTime?
+  completedDate DateTime?
+  progress      Int       @default(0)
+
+  budget     Float?
+  actualCost Float  @default(0)
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car    Car           @relation(fields: [carId], references: [id], onDelete: Cascade)
+  photos Photo[]
+  tasks  ProjectTask[]
+  parts  ProjectPart[]
+
+  @@map("projects")
+}
+
+model ProjectTask {
+  id          String    @id @default(cuid())
+  projectId   String
+  name        String
+  description String?
+  completed   Boolean   @default(false)
+  cost        Float?
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_tasks")
+}
+
+model ProjectPart {
+  id        String @id @default(cuid())
+  projectId String
+  partId    String
+  quantity  Int    @default(1)
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  part    Part    @relation(fields: [partId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, partId])
+  @@map("project_parts")
+}
+
+model MaintenanceItem {
+  id          String            @id @default(cuid())
+  userId      String
+  carId       String
+  type        String
+  description String?
+  status      MaintenanceStatus @default(UPCOMING)
+  priority    Priority          @default(MEDIUM)
+
+  dueDate          DateTime?
+  dueMileage       Int?
+  completedDate    DateTime?
+  completedMileage Int?
+
+  estimatedCost   Float?
+  actualCost      Float?
+  serviceCenterId String?
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car           Car            @relation(fields: [carId], references: [id], onDelete: Cascade)
+  serviceCenter ServiceCenter? @relation(fields: [serviceCenterId], references: [id])
+
+  @@map("maintenance_items")
+}
+
+model ServiceRecord {
+  id              String   @id @default(cuid())
+  carId           String
+  serviceCenterId String?
+  type            String
+  description     String?
+  mileage         Int?
+  cost            Float?
+  serviceDate     DateTime
+
+  notes     String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  car           Car            @relation(fields: [carId], references: [id], onDelete: Cascade)
+  serviceCenter ServiceCenter? @relation(fields: [serviceCenterId], references: [id])
+
+  @@map("service_records")
+}
+
+model ServiceCenter {
+  id        String  @id @default(cuid())
+  name      String
+  address   String?
+  phone     String?
+  email     String?
+  website   String?
+  specialty String?
+  rating    Float?
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  maintenanceItems MaintenanceItem[]
+  serviceRecords   ServiceRecord[]
+
+  @@map("service_centers")
+}
+
+model Recall {
+  id           String         @id @default(cuid())
+  carId        String
+  recallNumber String
+  title        String
+  description  String
+  severity     RecallSeverity @default(MEDIUM)
+  status       RecallStatus   @default(OPEN)
+  dateIssued   DateTime
+  remedy       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  car Car @relation(fields: [carId], references: [id], onDelete: Cascade)
+
+  @@map("recalls")
+}
+
+model Supplier {
+  id      String  @id @default(cuid())
+  name    String
+  website String?
+  phone   String?
+  email   String?
+
+  rating    Float?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  parts Part[]
+
+  @@map("suppliers")
+}
+
+model Photo {
+  id       String  @id @default(cuid())
+  url      String
+  filename String
+  size     Int?
+  mimeType String?
+  caption  String?
+
+  // Polymorphic relations
+  carId     String?
+  toolId    String?
+  partId    String?
+  projectId String?
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  car     Car?     @relation(fields: [carId], references: [id], onDelete: Cascade)
+  tool    Tool?    @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  part    Part?    @relation(fields: [partId], references: [id], onDelete: Cascade)
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("photos")
+}
+
+model CommunityReview {
+  id        String  @id @default(cuid())
+  userId    String
+  upgradeId String?
+  partId    String?
+
+  rating  Float
+  title   String?
+  content String
+  pros    String[] // JSON array
+  cons    String[] // JSON array
+
+  verified Boolean @default(false)
+  helpful  Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("community_reviews")
+}
+
+// Enums
+enum Experience {
+  BEGINNER
+  INTERMEDIATE
+  EXPERT
+}
+
+enum CarStatus {
+  RUNNING
+  IN_PROGRESS
+  NEEDS_REPAIR
+  STORED
+  SOLD
+}
+
+enum ToolCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  NEEDS_REPAIR
+}
+
+enum PartCondition {
+  NEW
+  USED_EXCELLENT
+  USED_GOOD
+  USED_FAIR
+  REFURBISHED
+}
+
+enum PartStatus {
+  IN_STOCK
+  INSTALLED
+  ORDERED
+  BACK_ORDERED
+  DISCONTINUED
+}
+
+enum ProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum MaintenanceStatus {
+  UPCOMING
+  DUE_SOON
+  OVERDUE
+  COMPLETED
+  SKIPPED
+}
+
+enum RecallSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum RecallStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  NOT_APPLICABLE
+}
