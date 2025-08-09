@@ -1,20 +1,7 @@
   'use client'
   
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/auth-context';
-import { useUser } from '../contexts/user-context';
-import { useGarage } from '../contexts/garage-context';
-import { useTools } from '../contexts/tools-context';
-import { useOnboarding } from '../contexts/onboarding-context';
-import { useModal } from '../contexts/modal-context';
-import { useAlert } from '../contexts/alert-context';
-import { useLoading } from '../contexts/loading-context';
-import { useTheme } from '../contexts/theme-context';
-import { useMediaQuery } from 'react-responsive';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/navigation';
 
 import { Garage } from '../types/garage-types';
 import { Tool } from '../types/tool-types';

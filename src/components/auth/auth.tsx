@@ -2,21 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../contexts/auth-context';
-import { useUser } from '../contexts/user-context';
-import { useGarage } from '../contexts/garage-context';
 import { Search, Plus, Car, Wrench, Clipboard, MapPin, Receipt, Camera, FileText, Star, Filter, X, Upload, Calendar, AlertTriangle, Clock, CheckCircle, Bell, Settings, ArrowLeft, ChevronRight, Zap, History, Package, Image, User, Phone, Mail, ArrowRight, Check } from 'lucide-react';
-import Onboarding from './onboarding/onboarding';
-import { useOnboarding } from '../contexts/onboarding-context';
-import { useCars } from '../contexts/cars-context';
-import { useTools } from '../contexts/tools-context';
-import { useNotifications } from '../contexts/notifications-context';
-import { useTasks } from '../contexts/tasks-context';
-import { useDocuments } from '../contexts/documents-context';
-import { usePhotos } from '../contexts/photos-context';
-import { useServices } from '../contexts/services-context';
-import { useReminders } from '../contexts/reminders-context';
-import { useHistory } from '../contexts/history-context';
 
   
   // Login/Signup Component

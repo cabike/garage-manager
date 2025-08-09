@@ -3,6 +3,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Plus, Car, Wrench, Clipboard, MapPin, Receipt, Camera, FileText, Star, Filter, X, Upload, Calendar, AlertTriangle, Clock, CheckCircle, Bell, Settings, ArrowLeft, ChevronRight, Zap, History, Package, Image, User, Phone, Mail, ArrowRight, Check } from 'lucide-react';
 
+import Auth from './auth/auth';
+import Onboarding from './onboarding/onboarding';
+
 const GarageManager = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isOnboarding, setIsOnboarding] = useState(false);
@@ -106,12 +109,12 @@ const GarageManager = () => {
 
   // Show auth screen if no user is logged in
   if (!currentUser && !isOnboarding) {
-    return <AuthScreen />;
+    return <Auth.AuthScreen />;
   }
 
   // Show onboarding if in onboarding flow
   if (isOnboarding) {
-    return <OnboardingFlow />;
+    return <Onboarding.OnboardingFlow />;
   }
 
   // Main app components remain the same but now filter by user...
