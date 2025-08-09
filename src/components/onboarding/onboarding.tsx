@@ -1,11 +1,6 @@
   'use client'
   
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
-import { Garage } from '../types/garage-types';
-import { Tool } from '../types/tool-types';
-import { OnboardingData } from '../types/onboarding-types';
+import React, { useState } from 'react';
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -429,3 +424,6 @@ const Onboarding = () => {
       </div>
     );
   };
+}
+
+export default Onboarding;

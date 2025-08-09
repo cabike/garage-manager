@@ -1,8 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Search, Plus, Car, Wrench, Clipboard, MapPin, Receipt, Camera, FileText, Star, Filter, X, Upload, Calendar, AlertTriangle, Clock, CheckCircle, Bell, Settings, ArrowLeft, ChevronRight, Zap, History, Package, Image, User, Phone, Mail, ArrowRight, Check } from 'lucide-react';
+import React, { useState } from 'react';
 
   
   // Login/Signup Component
@@ -80,3 +78,5 @@ import { Search, Plus, Car, Wrench, Clipboard, MapPin, Receipt, Camera, FileText
       </div>
     );
   };
+
+  export default AuthScreen;
